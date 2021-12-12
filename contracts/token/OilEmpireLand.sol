@@ -15,6 +15,7 @@ contract OilEmpireLand is ERC721, Ownable, VersionedInitializable {
     event UpdateBaseURI(string uri);
     event Mint(address to, uint256 tokenId);
     event Burn(address owner, uint256 tokenId);
+    event SetHash(uint256 tokenId, string hash);
 
     /**** the context of oil Empire land ****/
     // for version manager
@@ -70,6 +71,17 @@ contract OilEmpireLand is ERC721, Ownable, VersionedInitializable {
     function changeMinter(address minter_) external onlyOwner {
         _minter = minter_;
         emit ChangeMinter(minter_);
+    }
+
+    /*
+    * @dev setHash set hash(ipfs) for oil Empire Land by
+    */
+    function setHash(uint256 tokenId, string memory hash_) external {
+        require(ownerOf(tokenId) == _msgSender(), "NFT set hash fail for not owner");
+        LandContext storage context = _lands[tokenId];
+
+        context.hash = hash_;
+        emit SetHash(tokenId, hash_);
     }
 
     /*
