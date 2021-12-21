@@ -6,13 +6,15 @@ import {ERC20} from "../dependencies/contracts/token/ERC20/ERC20.sol";
 import {SafeMath} from "../dependencies/contracts/utils/math/SafeMath.sol";
 import {VersionedInitializable} from '../utils/VersionedInitializable.sol';
 
+import {Ownable} from "../dependencies/contracts/access/Ownable.sol";
+import "../dependencies/contracts/proxy/InitializableAdminUpgradeabilityProxy.sol";
+
 contract PetroToken is ERC20, AccessControl, VersionedInitializable {
     using SafeMath for uint256;
 
     /******** Key Variable ********/
     /*
-    * Meta Loan token Context contains:
-    *   name, symbol
+    * Meta Loan token Context contains: name, symbol
     */
     string public constant NAME = 'Oil Empire(Petro)';
     string public constant SYMBOL = 'Petro';
@@ -99,7 +101,7 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
     /*
     * set admin role for pcoin by constructor account
     */
-    constructor () ERC20('Polylend Impl', 'MIMPL') {
+    constructor () ERC20('Peter Impl', 'Peter') {
         //_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _accountCounts = 0;
     }
@@ -135,9 +137,7 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
         _setName(name_);
         _setSymbol(symbol_);
         _setDecimals(decimals_);
-
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
-
         emit Initialize(admin, name_, symbol_, decimals_);
     }
 
@@ -210,7 +210,7 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
         bytes32 r,
         bytes32 s
     )
-    external
+        external
     {
         require(owner != address(0), 'OWNER_IS_ZERO');
         //solium-disable-next-line
@@ -261,11 +261,7 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
     /*
     * record snapshots for from/to account
     */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    )
+    function _beforeTokenTransfer(address from, address to, uint256 amount)
         internal
         virtual
         override
@@ -293,5 +289,56 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
                 _accountCounts++;
             }
         }
+    }
+}
+
+/*
+* the upgrade proxy for the petro token
+*/
+contract PetroTokenProxy is Ownable {
+
+    address public _tokenProxy;
+
+    struct TokenInput {
+        address admin;
+        address impl;
+        string name;
+        string symbol;
+        uint8 decimals;
+    }
+
+    function Initialize(TokenInput calldata input) external onlyOwner
+    {
+        require(_tokenProxy == address(0), 'Create fail for proxy exist');
+        InitializableAdminUpgradeabilityProxy proxy =
+        new InitializableAdminUpgradeabilityProxy();
+
+        bytes memory initParams = abi.encodeWithSelector(
+            PetroToken.initialize.selector,
+            input.admin,
+            input.name,
+            input.symbol,
+            input.decimals
+        );
+
+        proxy.initialize(input.impl, address(this), initParams);
+
+        _tokenProxy = address(proxy);
+    }
+
+    function Upgrade(TokenInput calldata input) external onlyOwner
+    {
+        require(_tokenProxy != address(0), 'Upgrade fail for proxy null');
+        InitializableAdminUpgradeabilityProxy proxy =
+        InitializableAdminUpgradeabilityProxy(payable(_tokenProxy));
+
+        bytes memory initParams = abi.encodeWithSelector(
+            PetroToken.initialize.selector,
+            input.admin,
+            input.name,
+            input.symbol,
+            input.decimals
+        );
+        proxy.upgradeToAndCall(input.impl, initParams);
     }
 }

@@ -1,6 +1,6 @@
 const PetroToken = artifacts.require("PetroToken");
 const BigNumber = require("bignumber.js");
-const UpgradeToken = artifacts.require("UpgradeToken");
+const PetroTokenProxy = artifacts.require("PetroTokenProxy");
 const PetroTokenMock = artifacts.require("PetroTokenMock");
 
 let account_one;
@@ -13,7 +13,7 @@ let timestamp;
 
 let initFlag = true;
 
-contract('MintPolicyMock', async accounts => {
+contract('PetroToken', async accounts => {
   beforeEach(async () => {
     if ( initFlag ) {
         account_one = accounts[0];
@@ -23,7 +23,7 @@ contract('MintPolicyMock', async accounts => {
 
         PetroIns = await PetroToken.deployed();
 
-        _upgrade = await UpgradeToken.deployed();
+        _upgrade = await PetroTokenProxy.deployed();
         var name = await PetroIns.NAME();
         var symbol = await PetroIns.SYMBOL();
         var _initParams = [
@@ -71,7 +71,7 @@ contract('MintPolicyMock', async accounts => {
     isRole = await PetroIns.hasRole('0x00', account_two);
     assert.equal(isRole, false);
     // test success for do not add minter and account_one is not minter
-    //PetroIns.mint(account_two, 100000);
+    // await PetroIns.mint(account_two, 100000);
     // add account_two to minter
     var byte32_MINTER_ROLE = await PetroIns.MINTER_ROLE();
     await PetroIns.grantRole(byte32_MINTER_ROLE, account_two, {from: account_one});

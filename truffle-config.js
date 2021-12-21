@@ -24,6 +24,8 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 const fs = require('fs');
 const mnemonic = fs.readFileSync(".secret").toString().trim();
 console.log('private key:' + mnemonic);
+require('dotenv').config();
+console.log(process.env.ETHERSCAN_API_KEY)
 
 module.exports = {
   /**
@@ -74,11 +76,20 @@ module.exports = {
     // production: true    // Treats this network as if it was a public net. (default: false)
     // }
       Goerli: {
-        provider: () => new HDWalletProvider(mnemonic, 'https://goerli.infura.io/v3/8141e840c2f4470e84c7e2d70b85a6d7'),
+        provider: () => new HDWalletProvider(mnemonic,
+                                             //'https://rpc.slock.it/goerli'),
+                                             'https://goerli.infura.io/v3/8141e840c2f4470e84c7e2d70b85a6d7'),
         network_id: "5",
         networkCheckTimeout: 6000000,
         gas: 8000000           // Ropsten has a lower block limit than mainnet
       }
+  },
+
+  // for verify into Etherscan
+  plugins: ['truffle-plugin-verify'],
+
+  api_keys: {
+    etherscan: process.env.ETHERSCAN_API_KEY
   },
 
   // Set default mocha options here, use special reporters etc.
