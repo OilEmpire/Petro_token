@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity ^0.8.0;
 
-import {AccessControl} from "../dependencies/contracts/access/AccessControl.sol";
-import {ERC20} from "../dependencies/contracts/token/ERC20/ERC20.sol";
-import {SafeMath} from "../dependencies/contracts/utils/math/SafeMath.sol";
-import {VersionedInitializable} from '../utils/VersionedInitializable.sol';
+import "../dependencies/contracts/access/AccessControl.sol";
+import "../dependencies/contracts/token/ERC20/ERC20.sol";
+import "../dependencies/contracts/utils/math/SafeMath.sol";
+import '../utils/VersionedInitializable.sol';
 
-import {Ownable} from "../dependencies/contracts/access/Ownable.sol";
+import "../dependencies/contracts/access/Ownable.sol";
 import "../dependencies/contracts/proxy/InitializableAdminUpgradeabilityProxy.sol";
 
 contract PetroToken is ERC20, AccessControl, VersionedInitializable {
@@ -101,7 +101,7 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
     /*
     * set admin role for pcoin by constructor account
     */
-    constructor () ERC20('Peter Impl', 'Peter') {
+    constructor () ERC20('Polylend Impl', 'MIMPL') {
         //_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _accountCounts = 0;
     }

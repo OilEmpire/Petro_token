@@ -11,7 +11,7 @@ module.exports = async function (deployer, network, accounts) {
     if ( network == 'test' ) {
         return;
     }
-
+/*
     // for mumbai testnet
     if ( network == 'Goerli' ) {
         console.log(web3.utils);
@@ -49,4 +49,5 @@ module.exports = async function (deployer, network, accounts) {
         }
         );
     }
+*/
 }

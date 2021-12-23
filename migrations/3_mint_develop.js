@@ -8,7 +8,7 @@ module.exports = async function (deployer, network, accounts) {
     if ( network == 'test' ) {
         return;
     }
-
+/*
     var isMint = false;
     if ( network == 'Goerli' ) {
         Petro_address = '0xC7aC3CD5721269de0CD033Be0034516e025FA8FE';
@@ -35,4 +35,5 @@ module.exports = async function (deployer, network, accounts) {
         //console.log(amount.toNumber());
         await Petro.mint(accounts[0], amount, {from: accounts[0]});
     }
+*/
 }

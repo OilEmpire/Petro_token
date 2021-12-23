@@ -79,9 +79,17 @@ module.exports = {
         provider: () => new HDWalletProvider(mnemonic,
                                              //'https://rpc.slock.it/goerli'),
                                              'https://goerli.infura.io/v3/8141e840c2f4470e84c7e2d70b85a6d7'),
-        network_id: "5",
+        network_id: 5,
         networkCheckTimeout: 6000000,
         gas: 8000000           // Ropsten has a lower block limit than mainnet
+      },
+      Mainnet: {
+        provider: () => new HDWalletProvider(mnemonic,
+                                             'https://mainnet.infura.io/v3/e6459c604bf2431582965c1ee2e94c87'),
+        network_id: 1,
+        confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+        timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+        skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
       }
   },
 
@@ -107,7 +115,7 @@ module.exports = {
           enabled: true,
           runs: 200
         }
-      //  evmVersion: "byzantium"
+        //evmVersion: "byzantium"
       }
     }
   },
