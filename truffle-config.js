@@ -22,7 +22,7 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
 const fs = require('fs');
-const mnemonic = fs.readFileSync(".secret").toString().trim();
+const mnemonic = fs.readFileSync(".secret_testnet").toString().trim();
 console.log('private key:' + mnemonic);
 require('dotenv').config();
 console.log(process.env.ETHERSCAN_API_KEY)
@@ -90,6 +90,27 @@ module.exports = {
         confirmations: 2,    // # of confs to wait between deployments. (default: 0)
         timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
         skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+      },
+      BSC: {
+        provider: () => new HDWalletProvider(mnemonic,
+                                             'https://bsc-dataseed1.defibit.io/'),
+        network_id: 56,
+        confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+        timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+        skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+      },
+      mumbai: {
+        provider: function() {
+            return new HDWalletProvider(mnemonic,
+                                        //'https://polygon-mumbai.infura.io/v3/8141e840c2f4470e84c7e2d70b85a6d7');
+                                        //"wss://rpc-mumbai.matic.today");
+                                        'https://matic-mumbai.chainstacklabs.com');
+        },
+        network_id: 80001,       // Any network (default: none)
+        networkCheckTimeout: 30000,
+        confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+        timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+        skipDryRun: true
       }
   },
 

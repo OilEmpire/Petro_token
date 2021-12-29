@@ -21,31 +21,20 @@ contract('PetroToken', async accounts => {
         account_three = accounts[2];
         account_four = accounts[3];
 
-        PetroIns = await PetroToken.deployed();
-
         _upgrade = await PetroTokenProxy.deployed();
-        var name = await PetroIns.NAME();
-        var symbol = await PetroIns.SYMBOL();
-        var _initParams = [
-            account_one,
-            PetroIns.address,
-            name,
-            symbol,
-            18];
-
-        await _upgrade.Initialize(_initParams, {from:accounts[0]});
         var proxyAddress = await _upgrade._tokenProxy();
         console.log(proxyAddress);
-
+//      test success
 //        _initParams = [
 //            account_two,
-//            PetroIns.address,
-//            name,
-//            symbol,
+//            account_four,
+//            'hello',
+//            'hello',
 //            18
 //        ];
+//        await _upgrade.Initialize(_initParams, {from:accounts[0]});
         PetroIns = await PetroToken.at(proxyAddress);
-        //await _upgrade.Initialize(_initParams, {from:accounts[0]});
+
 
         //timestamp = (await web3.eth.getBlock()).timestamp;
         initFlag = false;
@@ -56,7 +45,7 @@ contract('PetroToken', async accounts => {
       var name = await PetroIns.name();
       var symbol = await PetroIns.symbol();
       var decimals = (await PetroIns.decimals()).toNumber();
-      assert.equal(name, "Oil Empire(Petro)");
+      assert.equal(name, "Oil Empire");
       assert.equal(symbol, "Petro");
       assert.equal(decimals, 18);
       console.log(name, symbol, decimals);
@@ -151,6 +140,7 @@ contract('PetroToken', async accounts => {
     PetroIns.revokeRole(byte32_MINTER_ROLE, account_two, {from: account_one});
     // mint fail for account_two is not minter test success
     //await PetroIns.mint(account_three, 100000000, {from: account_two});
+    // await PetroIns.changeAdmin(account_two, {from: account_two});
     await PetroIns.changeAdmin(account_two, {from: account_one});
     // minter manager change from one to two test success
     // await PetroIns.grantRole(byte32_MINTER_ROLE, account_two, {from: account_one});

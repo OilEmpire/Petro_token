@@ -16,7 +16,7 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
     /*
     * Meta Loan token Context contains: name, symbol
     */
-    string public constant NAME = 'Oil Empire(Petro)';
+    string public constant NAME = 'Oil Empire';
     string public constant SYMBOL = 'Petro';
     // the number of accounts
     uint32 public _accountCounts;
@@ -101,7 +101,7 @@ contract PetroToken is ERC20, AccessControl, VersionedInitializable {
     /*
     * set admin role for pcoin by constructor account
     */
-    constructor () ERC20('Polylend Impl', 'MIMPL') {
+    constructor () ERC20(NAME, SYMBOL) {
         //_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _accountCounts = 0;
     }

@@ -1,6 +1,6 @@
-const PetroToken = artifacts.require("PetroToken");
-const PetroTokenProxy = artifacts.require("PetroTokenProxy");
-const BigNumber = require("bignumber.js");
+const OilEmpireLand = artifacts.require("OilEmpireLand");
+const OilEmpireLandUpgrade = artifacts.require("OilEmpireLandUpgrade");
+const OilEmpireLandExchange = artifacts.require("OilEmpireLandExchange");
 
 module.exports = async function (deployer, network, accounts) {
     if ( network == 'test' ) {
@@ -14,8 +14,9 @@ module.exports = async function (deployer, network, accounts) {
       || network == "mumbai" ) {
         var balance = new BigNumber(await web3.eth.getBalance(owner))
         console.log("User=" + owner + ",Balance=" + balance);
-        //await deployer.deploy(PetroToken, {from: owner});
-        await deployer.deploy(PetroTokenProxy, {from: owner});
+        await deployer.deploy(OilEmpireLand, {from: owner});
+        await deployer.deploy(OilEmpireLandUpgrade, {from: owner});
+        await deployer.deploy(OilEmpireLandExchange, {from: owner});
 
         var input = []
 
