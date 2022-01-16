@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity ^0.8.0;
 
-import "../dependencies/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../dependencies/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../dependencies/contracts/token/ERC721/ERC721.sol";
 import "../dependencies/contracts/access/Ownable.sol";
-import "../dependencies/contracts/utils/math/SafeMath.sol";
 import "../dependencies/contracts/proxy/InitializableAdminUpgradeabilityProxy.sol";
 import "../utils/VersionedInitializable.sol";
 
 contract OilEmpireLand is ERC721, VersionedInitializable {
-    using SafeMath for uint256;
 
     /**** event ****/
     event Initialize(address minter, string uri, string name, string symbol);
@@ -192,7 +189,7 @@ contract OilEmpireLand is ERC721, VersionedInitializable {
         return _name;
     }
 
-    function _baseURI() internal view virtual override returns (string memory) {
+    function baseURI() public view returns (string memory) {
         return _baseUri;
     }
 
@@ -253,7 +250,7 @@ contract OilEmpireLandUpgrade is Ownable {
     * @dev upgrade for oil empire land proxy
     * @params nftImpl
     */
-    function upgrade(address nftImpl, string memory uri)
+    function upgrade(address nftImpl, address nftOwner, string memory uri)
         external
         onlyOwner
     {
@@ -263,7 +260,7 @@ contract OilEmpireLandUpgrade is Ownable {
 
         bytes memory initParams = abi.encodeWithSelector(
             OilEmpireLand.initialize.selector,
-            address(this),
+            nftOwner,
             uri,
             NAME,
             SYMBOL
@@ -275,13 +272,14 @@ contract OilEmpireLandUpgrade is Ownable {
 }
 
 contract OilEmpireLandExchange is Ownable {
-    uint256 public _tokenIdScope;
     uint256 public _amountLimit;
     uint256 public _mintTokenId;
     address public _treasury;
 
     OilEmpireLand private _oilandNFT;
     IERC20Metadata private _petroERC20;
+
+    event Mint(address indexed user, uint256 tokenId, uint256 amount);
 
     function initialize(address petroERC20_,
                         address treasury_,
@@ -318,6 +316,7 @@ contract OilEmpireLandExchange is Ownable {
         require(amount >= _amountLimit, "mint amount < _amountLimit");
         _petroERC20.transferFrom(user, _treasury, amount);
         _oilandNFT.mint(to, _mintTokenId);
+        emit Mint(to, _mintTokenId, amount);
         _mintTokenId = _mintTokenId + 1;
     }
 }

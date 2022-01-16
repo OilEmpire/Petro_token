@@ -1,6 +1,7 @@
 const OilEmpireLandUpgrade = artifacts.require("OilEmpireLandUpgrade");
 const OilEmpireLand = artifacts.require("OilEmpireLand");
 const OilEmpireLandExchange = artifacts.require("OilEmpireLandExchange");
+const OilEmpireLandMock = artifacts.require("OilEmpireLandMock");
 const PetroTokenProxy = artifacts.require("PetroTokenProxy");
 const PetroToken = artifacts.require("PetroToken");
 const BigNumber = require("bignumber.js");
@@ -68,12 +69,10 @@ contract('OilEmpireLandTest', async accounts => {
 
             // nft insert into exchange
             await _exchange.initialize(petroImpl.address, treasury, _oilempire.address, {from: owner});
-            var _tokenIdScope = new BigNumber(await _exchange._tokenIdScope());
             var _mintTokenId = new BigNumber(await _exchange._mintTokenId());
             var _amountLimit = new BigNumber(await _exchange._amountLimit());
             var decimals = new BigNumber(await petroImpl.decimals());
             RAY = new BigNumber(10).exponentiatedBy(decimals);
-            console.log("_tokenIdScope=", _tokenIdScope.toNumber());
             console.log("_mintTokenId=", _mintTokenId.toNumber());
             console.log("_amountLimit=", _amountLimit.div(RAY).toNumber());
 
@@ -152,6 +151,10 @@ contract('OilEmpireLandTest', async accounts => {
         await _oilempire.updateaBaseURI('https://google.com/', {from: owner});
         await _oilempire.setHash(2, '0x98fbedfg23456', {from: account_three});
         await _oilempire.setDescribe(2, "{'word': 'hello world'}", {from: account_three});
+        var uri = await _oilempire.tokenURI(2);
+        console.log(uri);
+        uri = await _oilempire.baseURI();
+        console.log("baseUri=", uri);
         var lendContext = await _oilempire.getLandContext(2);
         console.log(lendContext);
         // test change owner success
@@ -182,7 +185,8 @@ contract('OilEmpireLandTest', async accounts => {
         await _exchange.mint(account_three, petroAmount, {from: account_three});
         await _exchange.mint(account_three, petroAmount, {from: account_three});
         await _exchange.mint(account_three, petroAmount, {from: account_three});
-        await _exchange.mint(account_three, petroAmount, {from: account_three});
+        var event = await _exchange.mint(account_three, petroAmount, {from: account_three});
+        console.log(event.logs[0].args);
 
         await _oilempire.setApprovalForAll(account_four, true, {from: account_three});
         await _oilempire.safeTransferFrom(account_three, account_five, 3, {from: account_four});
@@ -194,6 +198,10 @@ contract('OilEmpireLandTest', async accounts => {
         // test success for set approval false
         //await _oilempire.setApprovalForAll(account_four, false, {from: account_three});
         //await _oilempire.safeTransferFrom(account_three, account_five, 4, {from: account_four});
+    });
+
+    it ('upgarde-test', async() => {
+
     });
 
 });
